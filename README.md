@@ -103,7 +103,7 @@ myflix/
 
 ## Live Demo
 
-Try MyFlix online: [Click here to view demo](https://<username>.github.io/MyFlix/)
+Try MyFlix online: [Click here to view demo](https://himanshugupta278.github.io/Netflix-Clone/)
 
 
 ## License
