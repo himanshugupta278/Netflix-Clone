@@ -1,10 +1,11 @@
+// Data: movies and tv shows (each tv show has episodes)
  const movies = [
       {id:1,title:'Lagaan',year:2001,lang:'Hindi',rating:'8.1',desc:'Villagers take on British officers in a cricket match.',img:'image/Lagaan.jpg'},
       {id:2,title:'3 Idiots',year:2009,lang:'Hindi',rating:'8.3',desc:'College friends on a journey to find their lost buddy.',img:'image/idiots.jpg'},
       {id:3,title:'Shershaah',year:2021,lang:'Hindi',rating:'7.8',desc:'Biopic of Captain Vikram Batra.',img:'image/Shershaah.jpg'},
       {id:4,title:'Dangal',year:2016,lang:'Hindi',rating:'8.4',desc:'Wrestling story of two brothers trained by their father.',img:'image/Dangal.jpg'},
       {id:5,title:'The Great Escape',year:1963,lang:'English',rating:'8.2',desc:'Allied prisoners plan a spectacular break from a WWII camp.',img:'image/Great.jpg'},
-      {id:6,title:'Inception',year:2010,lang:'English',rating:'8.8',desc:'A thief who steals corporate secrets through dream-sharing.',img:'image/Inception.jpg'},
+      {id:6,title:'Inception',year:2010,lang:'English',rating:'8.8',desc:'A thief who steals corporate secrets through dream-sharing.',img:'image/inception-2010.webp'},
       {id:7,title:'Interstellar',year:2014,lang:'English',rating:'8.6',desc:'Explorers travel through a wormhole in space.',img:'image/Interstellar.jpeg'},
       {id:8,title:'The Dark Knight',year:2008,lang:'English',rating:'9.0',desc:'Batman faces the Joker in Gotham City.',img:'image/Knight.jpg'},
       {id:9,title:'Bahubali: The Beginning',year:2015,lang:'Hindi',rating:'8.0',desc:'Epic tale of a mysterious hero and a kingdom.',img:'image/bahubali.jpg'},
@@ -38,101 +39,234 @@
       {id:38,title:'The Lion King',year:1994,lang:'English',rating:'8.5',desc:'A young lion prince flees after his father is killed.',img:'image/resize-lion-king.jpg'},
       {id:40,title:'Dil Chahta Hai',year:2001,lang:'Hindi',rating:'8.1',desc:'Three friends navigate love and life after college.',img:'image/Dil.jpg'}
     ];
-
-    const sectionsConfig = [
-      {key:'trending',title:'Trending Now',filter: m=>true},
-      {key:'top',title:'Top Picks',filter: m=>parseFloat(m.rating)>=8.3},
-      {key:'bollywood',title:'Bollywood Hits',filter: m=>m.lang==='Hindi'},
-      {key:'hollywood',title:'Hollywood Blockbusters',filter: m=>m.lang==='English'}
-    ];
-
-    const sectionsEl = document.getElementById('sections');
-
-    function createSection(section){
-      const sec = document.createElement('div'); sec.className='section';
-      const h = document.createElement('h3'); h.textContent = section.title; sec.appendChild(h);
-
-      const row = document.createElement('div'); row.className='row';
-      const rowInner = document.createElement('div'); rowInner.className='row-inner';
-
-      const left = document.createElement('div'); 
-      left.className='arrow left'; 
-      left.innerHTML='&#9664;'; 
-      left.addEventListener('click', ()=>scrollRow(rowInner,-320));
-
-      const right = document.createElement('div'); 
-      right.className='arrow right'; 
-      right.innerHTML='&#9654;'; 
-      right.addEventListener('click', ()=>scrollRow(rowInner,320));
-
-      const items = movies.filter(section.filter).slice(0,20); // limit per row
-      items.forEach(m=>{
-        const c = document.createElement('div'); c.className='card';
-        c.innerHTML = `<img loading="lazy" src="${m.img}" alt="${m.title}"/><div class="card-title">${m.title} <div class='muted' style='font-size:12px'>${m.year} • ${m.lang}</div></div>`;
-        c.addEventListener('click', ()=>openModal(m));
-        rowInner.appendChild(c);
-      });
-
-      row.appendChild(left); row.appendChild(rowInner); row.appendChild(right);
-      sec.appendChild(row);
-      return sec;
-    }
-
-    function renderSections(){
-      sectionsEl.innerHTML='';
-      sectionsConfig.forEach(s=>{
-        sectionsEl.appendChild(createSection(s));
-      });
-    }
-
-    function scrollRow(rowInner, delta){
-      rowInner.scrollBy({left: delta, behavior: 'smooth'});
-    }
-
-    // initial render
-    renderSections();
-
-    const heroTitle = document.getElementById('hero-title');
-    const heroMeta = document.getElementById('hero-meta');
     const hero = document.getElementById('hero');
-    const featured = movies[0];
-    heroTitle.textContent = `Featured: ${featured.title}`;
-    heroMeta.textContent = `${featured.year} • ${featured.lang}`;
-    hero.style.backgroundImage = `linear-gradient(90deg, rgba(6,6,6,0.85), rgba(6,6,6,0.2)), url('${featured.img}')`;
+const featured = movies[0]; // first movie
 
-    const modal = document.getElementById('modal');
-    const modalImg = document.getElementById('modal-img');
-    const modalTitle = document.getElementById('modal-title');
-    const modalYear = document.getElementById('modal-year');
-    const modalMeta = document.getElementById('modal-meta');
-    const modalDesc = document.getElementById('modal-desc');
-    const modalRating = document.getElementById('modal-rating');
-    const modalClose = document.getElementById('modal-close');
+hero.style.backgroundImage = `
+  linear-gradient(90deg, rgba(6,6,6,0.85), rgba(6,6,6,0.2)),
+  url(${featured.img})
+`;
+hero.style.backgroundSize = "cover";
+hero.style.backgroundPosition = "center";
+hero.style.backgroundRepeat = "no-repeat";
 
-    function openModal(m){
-      modalImg.src = m.img; modalTitle.textContent = m.title; modalYear.textContent = m.year; modalMeta.textContent = `${m.lang}`; modalDesc.textContent = m.desc; modalRating.textContent = m.rating;
-      modal.classList.add('open');
-    }
-    modalClose.addEventListener('click', ()=>modal.classList.remove('open'));
-    modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.classList.remove('open') });
+document.getElementById('hero-title').textContent = `Featured: ${featured.title}`;
+document.getElementById('hero-meta').textContent = `${featured.year} • ${featured.lang} • ${featured.rating}`;
 
-    const search = document.getElementById('search');
-    search.addEventListener('input', ()=>{
-      const q = search.value.trim().toLowerCase();
-      if(!q){ renderSections(); return }
-      const filtered = movies.filter(m=>m.title.toLowerCase().includes(q));
-      sectionsEl.innerHTML = '';
-      const sec = document.createElement('div'); sec.className='section';
-      const h = document.createElement('h3'); h.textContent = `Search results for "${q}"`; sec.appendChild(h);
-      const row = document.createElement('div'); row.className='row';
-      const rowInner = document.createElement('div'); rowInner.className='row-inner';
-      filtered.forEach(m=>{
-        const c = document.createElement('div'); c.className='card';
-        c.innerHTML = `<img loading="lazy" src="${m.img}" alt="${m.title}"/><div class="card-title">${m.title} <div class='muted' style='font-size:12px'>${m.year} • ${m.lang}</div></div>`;
-        c.addEventListener('click', ()=>openModal(m));
-        rowInner.appendChild(c);
+const tvShows = [
+  {id:'t1', title:'Sacred Games', year:2018, lang:'Hindi', rating:'8.6', desc:'Crime-thriller set in Mumbai.', img:'image/Sacred-Games.jpg',
+    episodes:[
+      {ep:1, title:'Episode 1 - The Beginning', desc:'Intro to characters.'},
+      {ep:2, title:'Episode 2 - Dark Paths', desc:'Story deepens.'},
+      {ep:3, title:'Episode 3 - Choices', desc:'Tensions rise.'}
+    ]
+  },
+  {id:'t2', title:'Mirzapur', year:2018, lang:'Hindi', rating:'8.4', desc:'Crime saga with power struggles.', img:'image/Mirzapur1.jpg',
+    episodes:[
+      {ep:1, title:'Episode 1 - Coal Mafia', desc:'Introduction to Mirzapur.'},
+      {ep:2, title:'Episode 2 - Revenge', desc:'Conflict begins.'}
+    ]
+  },
+  {id:'t3', title:'Stranger Things', year:2016, lang:'English', rating:'8.7', desc:'Kids face supernatural forces.', img:'image/Stranger-Things.jpg',
+    episodes:[
+      {ep:1, title:'Chapter One: The Vanishing', desc:'Mysterious disappearance.'},
+      {ep:2, title:'Chapter Two: The Search', desc:'Search begins.'},
+      {ep:3, title:'Chapter Three: New Friend', desc:'Unlikely alliances.'}
+    ]
+  },
+  {id:'t4', title:'Money Heist', year:2017, lang:'English', rating:'8.3', desc:'High-stakes heist drama.', img:'image/money.jpg',
+    episodes:[
+      {ep:1, title:'Part 1: The Plan', desc:'Assembling the crew.'},
+      {ep:2, title:'Part 2: The Heist', desc:'Execution begins.'}
+    ]
+  },
+  {id:'t5', title:'The Crown', year:2016, lang:'English', rating:'8.6', desc:'Biography of the British royal family.', img:'image/Crown.jpg',
+    episodes:[
+      {ep:1, title:'Wolferton Splash', desc:'Royal introduction.'},
+      {ep:2, title:'Hyde Park Corner', desc:'Early struggles.'}
+    ]
+  }
+];
+
+// State
+let currentTab = 'home'; // home, movies, tvshows, mylist
+let myList = JSON.parse(localStorage.getItem('myList') || '[]'); // array of {id,type}
+const sectionsEl = document.getElementById('sections');
+const searchInput = document.getElementById('search');
+const mylistCountEl = document.getElementById('mylist-count');
+
+// Utils
+function saveMyList(){ localStorage.setItem('myList', JSON.stringify(myList)); updateMyListCount(); }
+function updateMyListCount(){ mylistCountEl.textContent = myList.length; }
+
+// Rendering
+function createCard(item, type){
+  const c = document.createElement('div'); c.className='card';
+  c.innerHTML = `<img src="${item.img}" alt="${item.title}"><div class="card-title">${item.title}<div class="muted">${item.year} • ${item.lang}</div></div>`;
+  c.addEventListener('click', ()=> openModal(item, type));
+  return c;
+}
+
+document.getElementById('play-hero').addEventListener('click', ()=>{
+  openModal(featured, 'movie');
+
+  const overlay = document.createElement('div');
+  overlay.style.position = 'absolute';
+  overlay.style.top = '0';
+  overlay.style.left = '0';
+  overlay.style.width = '100%';
+  overlay.style.height = '100%';
+  overlay.style.background = 'rgba(0,0,0,0.7)';
+  overlay.style.color = '#fff';
+  overlay.style.display = 'flex';
+  overlay.style.alignItems = 'center';
+  overlay.style.justifyContent = 'center';
+  overlay.style.fontSize = 'clamp(16px, 4vw, 28px)'; // font responsive
+  overlay.style.zIndex = '10';
+  overlay.style.textAlign = 'center';
+  overlay.textContent = `Playing ${featured.title}... (Demo)`;
+  
+  hero.appendChild(overlay);
+  setTimeout(()=> overlay.remove(), 2000);
+});
+
+
+
+document.getElementById('info-hero').addEventListener('click', ()=>{
+  openModal(featured, 'movie');
+});
+
+
+function renderSections(){
+  sectionsEl.innerHTML = '';
+  if(currentTab === 'home'){
+    // Home: mix a few rows (Trending: top rated, Movies, TV Shows)
+    const topRated = [...movies, ...tvShows].sort((a,b)=>parseFloat(b.rating)-parseFloat(a.rating)).slice(0,12);
+    appendRow('Trending Now', topRated);
+    appendRow('Movies Picks', movies.slice(0,20), 'movie');
+    appendRow('TV Shows', tvShows.slice(0,20), 'show');
+  } else if(currentTab === 'movies'){
+    appendRow('All Movies', movies, 'movie');
+  } else if(currentTab === 'tvshows'){
+    appendRow('All TV Shows', tvShows, 'show');
+  } else if(currentTab === 'mylist'){
+    const items = myList.map(x => {
+      return x.type==='movie' ? movies.find(m=>m.id===x.id) : tvShows.find(t=>t.id===x.id);
+    }).filter(Boolean);
+    appendRow('My List', items);
+  }
+}
+
+function appendRow(title, items, forceType){
+  const sec = document.createElement('div'); sec.className='section';
+  const h = document.createElement('h3'); h.textContent = title; sec.appendChild(h);
+
+  const row = document.createElement('div'); row.className='row';
+  const left = document.createElement('div'); left.className='arrow left'; left.innerHTML='&#9664;';
+  const right = document.createElement('div'); right.className='arrow right'; right.innerHTML='&#9654;';
+
+  const inner = document.createElement('div'); inner.className='row-inner';
+  items.forEach(it=>{
+    const type = forceType==='movie' ? 'movie' : (forceType==='show' ? 'show' : (movies.find(m=>m.id===it.id)?'movie':'show'));
+    inner.appendChild(createCard(it, type));
+  });
+
+  left.addEventListener('click', ()=> inner.scrollBy({left:-320,behavior:'smooth'}));
+  right.addEventListener('click', ()=> inner.scrollBy({left:320,behavior:'smooth'}));
+
+  row.appendChild(left); row.appendChild(inner); row.appendChild(right);
+  sec.appendChild(row);
+  sectionsEl.appendChild(sec);
+}
+
+// Modal
+const modal = document.getElementById('modal');
+const modalImg = document.getElementById('modal-img');
+const modalTitle = document.getElementById('modal-title');
+const modalYear = document.getElementById('modal-year');
+const modalMeta = document.getElementById('modal-meta');
+const modalDesc = document.getElementById('modal-desc');
+const modalRating = document.getElementById('modal-rating');
+const extraArea = document.getElementById('extra-area');
+const addToListBtn = document.getElementById('add-to-list');
+
+let lastOpened = null;
+function openModal(item, type){
+  lastOpened = {item,type};
+  modal.classList.add('open');
+  modalImg.src = item.img;
+  modalTitle.textContent = item.title;
+  modalYear.textContent = item.year;
+  modalMeta.textContent = item.lang + (item.seasons?(' • Seasons: '+item.seasons):'');
+  modalDesc.textContent = item.desc;
+  modalRating.textContent = item.rating;
+  // extra area: if show -> list episodes; if movie -> show simple info
+  extraArea.innerHTML = '';
+  if(type==='show' && item.episodes && item.episodes.length){
+    const epList = document.createElement('div');
+    epList.innerHTML = '<strong>Episodes:</strong>';
+    item.episodes.forEach(ep=>{
+      const b = document.createElement('button');
+      b.className = 'btn secondary';
+      b.style.margin = '6px 6px 0 0';
+      b.textContent = ep.title;
+      b.addEventListener('click', ()=> {
+        // When episode clicked, show episode details inside modal (as requested)
+        modalTitle.textContent = item.title + ' — ' + ep.title;
+        modalDesc.textContent = ep.desc;
+        // optionally mark that we are viewing episode
       });
-      row.appendChild(rowInner); sec.appendChild(row); sectionsEl.appendChild(sec);
+      epList.appendChild(b);
     });
+    extraArea.appendChild(epList);
+  } else {
+    extraArea.innerHTML = '<em>Click play to watch (demo)</em>';
+  }
+  // update add-to-list button text based on presence
+  const exists = myList.find(x=>x.id===item.id);
+  addToListBtn.textContent = exists ? 'Remove from My List' : '+ My List';
+  addToListBtn.onclick = ()=> toggleMyList(item, type);
+}
 
-    document.addEventListener('keydown', e=>{ if(e.key==='Escape') modal.classList.remove('open') });
+document.getElementById('modal-close').addEventListener('click', ()=> modal.classList.remove('open'));
+modal.addEventListener('click', (e)=> { if(e.target===modal) modal.classList.remove('open'); });
+document.addEventListener('keydown', e=> { if(e.key==='Escape') modal.classList.remove('open'); });
+
+// My List toggling
+function toggleMyList(item, type){
+  const idx = myList.findIndex(x=>x.id===item.id);
+  if(idx !== -1){
+    myList.splice(idx,1);
+  } else {
+    myList.push({id:item.id, type: type==='movie' ? 'movie' : 'show'});
+  }
+  saveMyList();
+  // update button text
+  addToListBtn.textContent = myList.find(x=>x.id===item.id) ? 'Remove from My List' : '+ My List';
+  renderSections();
+}
+
+// Navigation
+document.querySelectorAll('.nav-links a').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    document.querySelectorAll('.nav-links a').forEach(x=>x.classList.remove('active'));
+    a.classList.add('active');
+    currentTab = a.dataset.tab;
+    if(!currentTab) currentTab = a.textContent.trim().toLowerCase();
+    renderSections();
+  });
+});
+
+// Search (filters visible cards)
+searchInput.addEventListener('input', ()=>{
+  const q = searchInput.value.trim().toLowerCase();
+  document.querySelectorAll('.card').forEach(card=>{
+    const title = card.querySelector('.card-title').textContent.toLowerCase();
+    card.style.display = title.includes(q) ? '' : 'none';
+  });
+});
+
+// initial
+updateMyListCount();
+renderSections();
