@@ -52,10 +52,15 @@ A responsive **Netflix-style web demo** showcasing movies and TV shows with a fe
 
 myflix/
 │
+
 ├─ index.html # Main HTML file
+
 ├─ style.css # All CSS styling
+
 ├─ script.js # JavaScript for rendering, modal, search, My List
+
 ├─ image/ # Movie & TV show poster images
+
 └─ README.md # Project documentation
 
 
